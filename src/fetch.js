@@ -38,7 +38,7 @@ export function displayCurrentWeahterData(currentAttributes, maxMinAttributes) {
         <div class="main-data__max-min">
           <span id="max">${maxMinAttributes.currentDayMaxTemp}</span>${maxMinAttributes.currentDayMinTemp}<span id="min"></span>`;
   mainWeatherContainer.innerHTML = weatherDetails;
-  const parentContainer = document.getElementById("main-container");
+  const parentContainer = document.getElementsByClassName("main-container")[0];
   parentContainer.appendChild(mainWeatherContainer);
 }
 
