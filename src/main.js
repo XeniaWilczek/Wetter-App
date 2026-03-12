@@ -2,14 +2,14 @@ import "./index.scss";
 import {
   fetchCurrentWeahterData,
   fetchMaxMinData,
+  addLoadingStatus,
   displayCurrentWeahterData,
-  removeSpinner,
 } from "./fetch.js";
-
+const cityName = "Baden-Baden";
 async function init() {
-  const currentResult = await fetchCurrentWeahterData();
-  const maxMinResult = await fetchMaxMinData();
-  removeSpinner();
+  addLoadingStatus(cityName);
+  const currentResult = await fetchCurrentWeahterData(cityName);
+  const maxMinResult = await fetchMaxMinData(cityName);
   displayCurrentWeahterData(currentResult, maxMinResult);
 }
 
