@@ -57,3 +57,34 @@ body {
     font-size: 0.75rem;
   }
 }
+
+.hourly-weather {
+  width: 100%;
+  border-radius: $border-radius;
+  background: linear-gradient(0deg, $elevation-2 0%, $background 50%);
+  color: $text-color;
+  padding: 0.5rem;
+  box-sizing: border-box;
+  box-shadow: $box-shadow;
+
+  &__text {
+    padding-bottom: 0.5rem;
+    margin-bottom: 0.5rem;
+    border-bottom: 1px solid white;
+    font-size: 0.8rem;
+  }
+  &__hours {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    width: 4rem;
+    font-size: 0.8rem;
+    overflow-x: auto;
+  }
+  &__icon {
+    height: 2rem;
+    width: 2rem;
+  }
+}
