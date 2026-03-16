@@ -8,6 +8,10 @@
   margin: 0;
 }
 
+::-webkit-scrollbar {
+  width: 0;
+}
+
 body {
   @include largeScreens {
     display: flex;
@@ -66,6 +70,7 @@ body {
   padding: 0.5rem;
   box-sizing: border-box;
   box-shadow: $box-shadow;
+  backdrop-filter: blur(50%);
 
   &__text {
     padding-bottom: 0.5rem;
@@ -79,7 +84,14 @@ body {
     align-items: center;
     gap: 1rem;
     font-size: 0.8rem;
-    overflow-x: scroll;
+    overflow-x: auto;
+  }
+  &__hour {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
   }
   &__icon {
     height: 2rem;

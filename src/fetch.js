@@ -43,7 +43,7 @@ export function displayCurrentWeahterData(currentAttributes, maxMinAttributes) {
         <p class="main-data__temperature">${currentAttributes.currentTeperature + " °"}</p>
         <p class="main-data__condition">${currentAttributes.condition}</p>
         <div class="main-data__max-min">
-<span id="max"></span>${"H:" + maxMinAttributes.currentDayMaxTemp + " "}<span id="min">${"T:" + maxMinAttributes.currentDayMinTemp}</span></div>`;
+<span id="max"></span>${"H:" + maxMinAttributes.currentDayMaxTemp + "° "}<span id="min">${"T:" + maxMinAttributes.currentDayMinTemp + "°"}</span></div>`;
   mainWeatherContainer.innerHTML = weatherDetails;
   const parentContainer = document.getElementsByClassName("main-container")[0];
   parentContainer.appendChild(mainWeatherContainer);
@@ -87,9 +87,9 @@ export function displayHourlyWeatherData(
   const currentWeatherDetails = `<div class="hourly-weather__text"><span>${"Heute " + currentAttributes.condition + ". "}</span><span>${"Wind bis zu " + currentAttributes.maxWindSpeed + " km/h"}</span></div>
         <div class="hourly-weather__hours">
           <div class="hourly-weather__hour">
-            <p class="hourly-wather__hour">Jetzt</p>
+            <p class="hourly-weather__time">Jetzt</p>
             <img src="${currentAttributes.icon}" class="hourly-weather__icon"/>
-            <p class="hourly-wather__temperature">${currentAttributes.currentTeperature + " °"}</p>
+            <p class="hourly-weather__temperature">${currentAttributes.currentTeperature + " °"}</p>
           </div>`;
 
   //Variable zur Anzeige der Wetterdaten der weiteren Stunden
@@ -111,7 +111,7 @@ export function displayHourlyWeatherData(
       </div>`;
   });
 
-  // beide html-String zusammenfügen und div schließen
+  // beide html-String zusammenfügen und divs erst dann schließen (hourly.weather__hours und hourly-weather)
   hoursContainer.innerHTML =
     currentWeatherDetails + hourlyWeatherDetails + `</div></div>`;
 
