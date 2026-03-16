@@ -21,7 +21,7 @@ export async function fetchCurrentWeahterData(cityName) {
   return currentAttributes;
 }
 
-export async function fetchForecastWeatherData(cityName) {
+export async function fetchMaxMinWeatherData(cityName) {
   const forecastAPI = `${apiURL}/forecast.json?key=${apiKey}&lang=${apiLanguage}&q=${cityName}&days=3`;
   const response = await fetch(forecastAPI);
   const maxMinForecast = await response.json();
@@ -49,6 +49,26 @@ export function displayCurrentWeahterData(currentAttributes, maxMinAttributes) {
   parentContainer.appendChild(mainWeatherContainer);
 }
 
+export async function fetchHourlyWeatherData(cityName) {
+  const forecastAPI = `${apiURL}/forecast.json?key=${apiKey}&lang=${apiLanguage}&q=${cityName}&days=3`;
+  const response = await fetch(forecastAPI);
+  const data = await response.json();
+  // aktuelle Uhrzeit herausfinden
+  const currentTimeIndex = new Date().getHours();
+  //Alle stündlichen Daten des aktuellen und nächsten Tages holen
+  const currentDayData = data.forecast.forecastday[0].hour;
+  const nextDayData = data.forecast.forecastday[1].hour;
+  //Listen zsuammenfügen, damit die Vorhersage nicht am Ende des aktuellen Tages endet
+  const allHoursData = currentDayData.concat(nextDayData);
+  //Ausschnitt imer ab der aktuellen Stunde bis zur 24.Stunde
+  const nextTwentyFourHours = allHoursData.slice(
+    currentTimeIndex,
+    currentTimeIndex + 24,
+  );
+
+  return nextTwentyFourHours;
+}
+
 export async function addLoadingStatus(cityName) {
   const loadingMessage = document.getElementsByClassName(
     "loading-status__loading-message",
@@ -56,18 +76,45 @@ export async function addLoadingStatus(cityName) {
   loadingMessage.innerHTML = `Wetterdaten für ${cityName} werden geladen...`;
 }
 
-export function displayHourlyWeatherData(currentAttributes) {
+export function displayHourlyWeatherData(
+  currentAttributes,
+  nextTwentyFourHours,
+) {
   const hoursContainer = document.createElement("div");
   hoursContainer.className = "hourly-weather";
-  const hourlyWeatherDetails = `<div class="hourly-weather__text"><span>${"Heute " + currentAttributes.condition + ". "}</span><span>${"Wind bis zu " + currentAttributes.maxWindSpeed + " km/h"}</span></div>
+
+  // html-String für currentWeatherDetails
+  const currentWeatherDetails = `<div class="hourly-weather__text"><span>${"Heute " + currentAttributes.condition + ". "}</span><span>${"Wind bis zu " + currentAttributes.maxWindSpeed + " km/h"}</span></div>
         <div class="hourly-weather__hours">
-          <p "hourly-wather__hour">Jetzt</p>
-          <img src="${currentAttributes.icon}" class="hourly-weather__icon"/>
-          <p class="hourly-wather__temperature">${currentAttributes.currentTeperature + " °"}</p>
-        </div>
-        </div>
+          <div class="hourly-weather__hour">
+            <p class="hourly-wather__hour">Jetzt</p>
+            <img src="${currentAttributes.icon}" class="hourly-weather__icon"/>
+            <p class="hourly-wather__temperature">${currentAttributes.currentTeperature + " °"}</p>
+          </div>`;
+
+  //Variable zur Anzeige der Wetterdaten der weiteren Stunden
+  let hourlyWeatherDetails = "";
+
+  // forEach-Schleife ab Index 1 (aktuellen Wert auslassen)
+  nextTwentyFourHours.slice(1).forEach((element, index) => {
+    const hourlyDate = new Date(element.time);
+    const hourlyTime = hourlyDate.getHours();
+    const hourlyIcon = element.condition.icon;
+    const hourlyTemperature = formatTemperature(element.temp_c);
+
+    // Anhängen der stündlichen Wetterdaten an aktuelle Wetterdaten
+    hourlyWeatherDetails += `
+      <div class="hourly-weather__hour">
+        <p class="hourly-weather__time">${hourlyTime + ":00"}</p>
+        <img src="${hourlyIcon}" class="hourly-weather__icon" alt="Wetter Icon"/>
+        <p class="hourly-weather__temperature">${hourlyTemperature}°</p>
       </div>`;
-  hoursContainer.innerHTML += hourlyWeatherDetails;
+  });
+
+  // beide html-String zusammenfügen und div schließen
+  hoursContainer.innerHTML =
+    currentWeatherDetails + hourlyWeatherDetails + `</div></div>`;
+
   const parentContainer = document.getElementsByClassName("main-container")[0];
   parentContainer.appendChild(hoursContainer);
 }
