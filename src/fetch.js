@@ -5,6 +5,13 @@ const apiURL = "https://api.weatherapi.com/v1/";
 const apiKey = "90830fb3c1a343c28d9123005261003";
 const apiLanguage = "de";
 
+export async function addLoadingStatus(cityName) {
+  const loadingMessage = document.getElementsByClassName(
+    "loading-status__loading-message",
+  )[0];
+  loadingMessage.innerHTML = `Wetterdaten für ${cityName} werden geladen...`;
+}
+
 export async function fetchCurrentWeahterData(cityName) {
   //cityName ist der einzige variable Punkt in der FUnktion; fixert Wert "Baden-Baden wird beim Aufruf gesetzt"
   const currentAPI = `${apiURL}/current.json?key=${apiKey}&lang=${apiLanguage}&q=${cityName}`;
@@ -50,30 +57,33 @@ export function displayCurrentWeahterData(currentAttributes, maxMinAttributes) {
 }
 
 export async function fetchHourlyWeatherData(cityName) {
-  const forecastAPI = `${apiURL}/forecast.json?key=${apiKey}&lang=${apiLanguage}&q=${cityName}&days=3`;
+  const forecastAPI = `${apiURL}/forecast.json?key=${apiKey}&lang=${apiLanguage}&q=${cityName}&days=2`;
   const response = await fetch(forecastAPI);
   const data = await response.json();
-  // aktuelle Uhrzeit herausfinden
-  const currentTimeIndex = new Date().getHours();
-  //Alle stündlichen Daten des aktuellen und nächsten Tages holen
+  //beide Listen zusammenfügen
   const currentDayData = data.forecast.forecastday[0].hour;
   const nextDayData = data.forecast.forecastday[1].hour;
-  //Listen zsuammenfügen, damit die Vorhersage nicht am Ende des aktuellen Tages endet
   const allHoursData = currentDayData.concat(nextDayData);
-  //Ausschnitt imer ab der aktuellen Stunde bis zur 24.Stunde
+
+  // Aktuelle Stunde ermitteln
+  const currentHour = new Date().getHours();
+
+  //Index des Elements finden, das der aktuellen Stunde entspricht
+  const startIndex = allHoursData.findIndex((hour) => {
+    const hourDate = new Date(hour.time);
+    return hourDate.getHours() === currentHour;
+  });
+
+  // Falls der Index nicht gefunden wird, die aktuelle Stunde wählen
+  const finalStartIndex = startIndex !== -1 ? startIndex : currentHour;
+
+  // Ausschnitt immer ab der aktuellen Stunde für die nächsten 24 Stunden
   const nextTwentyFourHours = allHoursData.slice(
-    currentTimeIndex,
-    currentTimeIndex + 24,
+    finalStartIndex,
+    finalStartIndex + 24,
   );
 
   return nextTwentyFourHours;
-}
-
-export async function addLoadingStatus(cityName) {
-  const loadingMessage = document.getElementsByClassName(
-    "loading-status__loading-message",
-  )[0];
-  loadingMessage.innerHTML = `Wetterdaten für ${cityName} werden geladen...`;
 }
 
 export function displayHourlyWeatherData(
@@ -117,4 +127,109 @@ export function displayHourlyWeatherData(
 
   const parentContainer = document.getElementsByClassName("main-container")[0];
   parentContainer.appendChild(hoursContainer);
+}
+
+export async function fetchThreeDaysWeatherData(cityName) {
+  const forecastAPI = `${apiURL}/forecast.json?key=${apiKey}&lang=${apiLanguage}&q=${cityName}&days=3`;
+  const response = await fetch(forecastAPI);
+  const weatherData = await response.json();
+
+  // leeres Array für drei Tag-Objekte
+  let forecastElements = [];
+  const threeDaysData = weatherData.forecast.forecastday;
+
+  threeDaysData.forEach((object, i) => {
+    const dateObject = new Date(object.date);
+    let dayName = dateObject.toLocaleDateString("de-DE", { weekday: "short" });
+
+    if (i === 0) {
+      dayName = "Heute";
+    }
+    // Tag-Objekt mit erwünschten Eigenschaften aufbauen
+    const dayData = {
+      date: object.date,
+      weekday: dayName,
+      maxTemp: formatTemperature(object.day.maxtemp_c),
+      minTemp: formatTemperature(object.day.mintemp_c),
+      maxWind: object.day.maxwind_kph,
+      icon: object.day.condition.icon,
+    };
+
+    // Tag-Objekte zum Array hinzufügen
+    forecastElements.push(dayData);
+  });
+
+  return forecastElements;
+}
+
+export function displayThreeDaysWeatherData(forecastElements) {
+  const forecastContainer = document.createElement("div");
+  forecastContainer.className = "threeDaysForecast";
+
+  const forecastHeading = document.createElement("p");
+  forecastHeading.className = "threeDaysForecast__text";
+  const forecastHeadingText = document.createTextNode(
+    "Vorhersage für die nächsten 3 Tage:",
+  );
+  forecastHeading.appendChild(forecastHeadingText);
+  forecastContainer.appendChild(forecastHeading);
+
+  const daysContainer = document.createElement("div");
+  daysContainer.className = "threeDaysForecast__days-container";
+
+  // div für jeden der 3 Tage erstellen
+  forecastElements.forEach((dayData) => {
+    const dayHTML = `
+      <div class="threeDaysForecast__day">
+        <span class="threeDaysForecast__weekday">${dayData.weekday}</span>
+        <img src="${dayData.icon}" alt="Wetter-Icon" class="threeDaysForecast__icon"> 
+        <span>${"H " + dayData.maxTemp + "°"}</span> 
+        <span>${"T " + dayData.minTemp + "°"}</span> 
+        <span>${"Wind: " + dayData.maxWind + "km/h"}</span>
+      </div>`;
+
+    daysContainer.innerHTML += dayHTML;
+  });
+
+  //Alle Elemente zusammenfügen
+  forecastContainer.appendChild(daysContainer);
+
+  const mainContainer = document.querySelector(".main-container");
+  mainContainer.appendChild(forecastContainer);
+}
+
+export async function fetchSpecificInformation(cityName) {
+  const forecastAPI = `${apiURL}/forecast.json?key=${apiKey}&lang=${apiLanguage}&q=${cityName}&days=1`;
+  const response = await fetch(forecastAPI);
+  const specificInformation = await response.json();
+
+  return {
+    humidity: specificInformation.current.humidity,
+    feelslike: specificInformation.current.feelslike_c,
+    uvIndex: specificInformation.current.uv,
+    precipitation: specificInformation.current.precip_mm,
+    sunrise: specificInformation.forecast.forecastday[0].astro.sunrise,
+    sunset: specificInformation.forecast.forecastday[0].astro.sunset,
+  };
+}
+
+export function displaySpecificInformation(heading, text) {
+  const mainContainer = document.querySelector(".main-container");
+  let specificInfoContainer = document.querySelector(".specific-information");
+
+  // specificInfoContainer nur erzeugen, wenn er noch nicht exisitert (sonst wird er bei jedem Funktionsaufruf erstellt)
+  if (!specificInfoContainer) {
+    specificInfoContainer = document.createElement("div");
+    specificInfoContainer.className = "specific-information";
+    mainContainer.appendChild(specificInfoContainer);
+  }
+
+  const cardHTML = `
+    <div class="specific-information__card">
+      <p class="specific-information__heading">${heading}</p>
+      <p class="specific-information__text">${text}</p>
+    </div>
+  `;
+
+  specificInfoContainer.innerHTML += cardHTML;
 }
