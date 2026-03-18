@@ -6,10 +6,25 @@ const apiKey = "90830fb3c1a343c28d9123005261003";
 const apiLanguage = "de";
 
 export async function addLoadingStatus(cityName) {
-  const loadingMessage = document.getElementsByClassName(
-    "loading-status__loading-message",
-  )[0];
-  loadingMessage.innerHTML = `Wetterdaten für ${cityName} werden geladen...`;
+  const parentContainer = document.querySelector(".main-container");
+
+  let loadingMessage;
+  if (cityName) {
+    loadingMessage = `Wetterdaten für ${cityName} werden geladen...`;
+  } else {
+    loadingMessage = "Wetterdaten werden geladen...";
+  }
+
+  parentContainer.innerHTML = `
+    <div class="loading-status">
+      <div class="loading-status__loading-message">${loadingMessage}</div>
+      <div class="loading-status__lds-ring">
+        <div></div><div></div><div></div><div></div>
+        <div></div><div></div><div></div><div></div>
+        <div></div><div></div><div></div><div></div>
+      </div>
+    </div>
+  `;
 }
 
 export async function fetchCurrentWeahterData(cityName) {
@@ -20,6 +35,7 @@ export async function fetchCurrentWeahterData(cityName) {
   console.log(currentCity);
   let currentAttributes = {
     name: currentCity.location.name,
+    currentCountry: currentCity.location.country,
     currentTeperature: formatTemperature(currentCity.current.temp_c),
     condition: currentCity.current.condition.text,
     maxWindSpeed: currentCity.current.wind_kph,
@@ -234,4 +250,43 @@ export function displaySpecificInformation(heading, text) {
   `;
 
   specificInfoContainer.innerHTML += cardHTML;
+}
+
+//Funktionen für Haupt-Menü
+export function displayCity(currentAttributes, maxMinAttributes) {
+  const mainContainer = document.querySelector(".main-container");
+  const weatherContainer = document.createElement("div");
+  weatherContainer.className = "weather-container";
+  const forecastHeading = `<div class="heading-container"><h2 class="heading-container__heading">Wetter</h2><button class="heading-container__button">Bearbeiten</button></div>`;
+  const forecastInput = `<input type="text" id="main-menu-input" placeholder="Nach Stadt suchen..."></input>`;
+  //Bei dynamischen Werten Schleife nicht vergessen
+  const weatherCard = `<div class="weather-container__wrapper">
+<div class="weather-container__card">
+  <div class="left-column">
+    <h3 class="left-column__heading">${currentAttributes.name}</h3>
+    <p class="left-column__text">${currentAttributes.currentCountry}</p>
+    <p class="left-column__text lower-text">${currentAttributes.condition}</p>
+  </div>
+  <div class="right-column">
+     <h3 class="right-column__temperature">${currentAttributes.currentTeperature}</h3>
+     <p class="right-column__text"><span>${"H:" + maxMinAttributes.currentDayMaxTemp + "° "}</span><span>${"T:" + maxMinAttributes.currentDayMinTemp + "°"}</span></p>
+  </div>
+    </div>
+  </div>`;
+
+  weatherContainer.innerHTML += forecastHeading + forecastInput + weatherCard;
+  mainContainer.appendChild(weatherContainer);
+}
+
+export function cardEvents(weatherContainer, cityName, parameterForInit) {
+  if (weatherContainer) {
+    weatherContainer.addEventListener("click", (event) => {
+      const clickedCard = event.target.closest(".weather-container__card");
+
+      if (clickedCard) {
+        // Parameter für init-Funtion mit Parameter für Stadtnamen
+        parameterForInit(cityName);
+      }
+    });
+  }
 }

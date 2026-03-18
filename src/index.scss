@@ -20,13 +20,14 @@ body {
     min-height: 100vh;
     font-size: 1rem;
     color: white;
-    background-color: lighten($background, 10);
   }
 }
 .main-container {
   //bei kleinen Bildschirmen keine feste Höhe gesetzt, damit sich die Höhe dem Inhalt anpasst
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
   font-family: "Inter", sans-serif;
-  background: linear-gradient(0deg, $elevation-2 0%, $background 50%);
   color: $text-color;
   padding: 1rem;
   min-height: 100vh;
@@ -36,7 +37,10 @@ body {
     min-height: unset;
     overflow: auto;
     border-radius: $border-radius;
-    box-shadow: $box-shadow;
+    background-position: center;
+    background-size: cover;
+    @include blurEffect;
+    background: linear-gradient(0deg, #404547, #252e3a 51%);
   }
 }
 
@@ -65,13 +69,12 @@ body {
 .hourly-weather {
   width: 100%;
   border-radius: $border-radius;
-  background: linear-gradient(0deg, $elevation-2 0%, $background 50%);
   color: $text-color;
   padding: 0.5rem;
   box-sizing: border-box;
-  box-shadow: $box-shadow;
-  backdrop-filter: blur(50%);
+  backdrop-filter: blur(50px);
   margin-bottom: 2rem;
+  @include blurEffect;
 
   &__text {
     padding-bottom: 0.8rem;
@@ -101,13 +104,12 @@ body {
 .threeDaysForecast {
   width: 100%;
   border-radius: $border-radius;
-  background: linear-gradient(0deg, $elevation-2 0%, $background 50%);
   color: $text-color;
   padding: 1rem;
   box-sizing: border-box;
-  box-shadow: $box-shadow;
-  backdrop-filter: blur(50%);
+  backdrop-filter: blur(50px);
   margin-bottom: 2rem;
+  @include blurEffect;
 
   &__text {
     padding-bottom: 0.8rem;
@@ -150,6 +152,7 @@ body {
   gap: 1rem;
   width: 100%;
   box-sizing: border-box;
+  @include blurEffect;
 
   &__card {
     display: flex;
@@ -157,12 +160,12 @@ body {
     justify-content: center;
     align-items: center;
     gap: 1rem;
-    background-color: $elevation-2;
     border-radius: $border-radius;
     box-sizing: border-box;
     padding: 0.5rem 0;
     height: 100%;
     width: 100%;
+    @include blurEffect;
   }
   &__heading {
     font-size: 0.8rem;
@@ -170,5 +173,100 @@ body {
   }
   &__text {
     font-size: 1.2rem;
+  }
+}
+
+//Styling für das Haupt-Menü
+.heading-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-shadow: 1px 1px 5px #000;
+  &__heading {
+    font-size: 3rem;
+    font-weight: 300;
+  }
+  &__button {
+    font-size: 1rem;
+    font-weight: 700;
+    background-color: transparent;
+    border: none;
+    text-shadow: 1px 1px 5px #000;
+    cursor: pointer;
+    color: white;
+  }
+}
+#main-menu-input {
+  font-size: 1rem;
+  border: none;
+  border-radius: $border-radius;
+  height: 3rem;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.5rem;
+  cursor: pointer;
+  &::placeholder {
+    color: gray;
+  }
+}
+.weather-container {
+  display: grid;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  margin: 0 auto;
+  &__card {
+    display: flex;
+    align-items: center;
+    min-height: 120px;
+    width: 100%;
+    border-radius: $border-radius;
+    background-position: center;
+    background-size: cover;
+    box-sizing: border-box;
+    padding: 0.5rem;
+    text-shadow: $text-shadow;
+    @include blurEffect;
+
+    &:hover {
+      cursor: pointer;
+    }
+  }
+}
+
+.left-column {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+  width: 60%;
+  &__heading {
+    font-size: 1.5rem;
+    font-weight: 300;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  &__text {
+    font-size: 0.8rem;
+  }
+}
+.lower-text {
+  margin-top: 1rem;
+}
+
+.right-column {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5rem;
+  width: 40%;
+  &__temperature {
+    font-size: 3rem;
+    font-weight: 300;
+  }
+  &__text {
+    font-size: 0.8rem;
+    margin-top: 1rem;
   }
 }

@@ -19,11 +19,9 @@ export function formatToMilitaryTime(time) {
 }
 
 export function chooseImagePath(conditionCode, isNight = false) {
-  console.log(conditionCode);
   const imagePath = getConditionImagePath(conditionCode, isNight);
 
   if (imagePath) {
-    console.log(imagePath);
     const mainContainer = document.querySelector(".main-container");
     mainContainer.style.backgroundImage = `url(${imagePath})`;
   }

@@ -3,3 +3,8 @@
     @content;
   }
 }
+
+@mixin blurEffect {
+  box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(50px);
+}
