@@ -1,4 +1,4 @@
-import { formatTemperature } from "./utils.js";
+import { formatTemperature, formatToMilitaryTime } from "./utils.js";
 
 //Globale Variablen zum Speichern der Bestandteile der APIs
 const apiURL = "https://api.weatherapi.com/v1/";
@@ -24,6 +24,8 @@ export async function fetchCurrentWeahterData(cityName) {
     condition: currentCity.current.condition.text,
     maxWindSpeed: currentCity.current.wind_kph,
     icon: currentCity.current.condition.icon,
+    conditionCode: currentCity.current.condition.code,
+    isDay: currentCity.current.is_day === 1,
   };
   return currentAttributes;
 }

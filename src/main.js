@@ -11,11 +11,13 @@ import {
   fetchSpecificInformation,
   displaySpecificInformation,
 } from "./fetch.js";
+import { formatToMilitaryTime, chooseImagePath } from "./utils.js";
 
 const cityName = "Baden-Baden";
 async function init() {
   addLoadingStatus(cityName);
   const currentResult = await fetchCurrentWeahterData(cityName);
+  chooseImagePath(currentResult.conditionCode, !currentResult.isDay);
   const maxMinResult = await fetchMaxMinWeatherData(cityName);
   const hourlyResult = await fetchHourlyWeatherData(cityName);
   const forecastResult = await fetchThreeDaysWeatherData(cityName);
@@ -34,11 +36,11 @@ async function init() {
   displaySpecificInformation("UV-Index", specificInfoResult.uvIndex);
   displaySpecificInformation(
     "Sonnenaufgang",
-    specificInfoResult.sunrise + "Uhr",
+    formatToMilitaryTime(specificInfoResult.sunrise) + " Uhr",
   );
   displaySpecificInformation(
     "Sonnenuntergang",
-    specificInfoResult.sunset + "Uhr",
+    formatToMilitaryTime(specificInfoResult.sunset) + " Uhr",
   );
 }
 
