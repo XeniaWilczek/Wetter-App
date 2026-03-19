@@ -1,4 +1,4 @@
-import { formatTemperature, formatToMilitaryTime } from "./utils.js";
+import { formatTemperature } from "./utils.js";
 
 //Globale Variablen zum Speichern der Bestandteile der APIs
 const apiURL = "https://api.weatherapi.com/v1/";
@@ -12,7 +12,7 @@ export async function addLoadingStatus(cityName) {
   if (cityName) {
     loadingMessage = `Wetterdaten für ${cityName} werden geladen...`;
   } else {
-    loadingMessage = "Wetterdaten werden geladen...";
+    loadingMessage = "Laden...";
   }
 
   parentContainer.innerHTML = `
@@ -124,7 +124,7 @@ export function displayHourlyWeatherData(
   let hourlyWeatherDetails = "";
 
   // forEach-Schleife ab Index 1 (aktuellen Wert auslassen)
-  nextTwentyFourHours.slice(1).forEach((element, index) => {
+  nextTwentyFourHours.slice(1).forEach((element) => {
     const hourlyDate = new Date(element.time);
     const hourlyTime = hourlyDate.getHours();
     const hourlyIcon = element.condition.icon;
@@ -253,40 +253,29 @@ export function displaySpecificInformation(heading, text) {
 }
 
 //Funktionen für Haupt-Menü
-export function displayCity(currentAttributes, maxMinAttributes) {
-  const mainContainer = document.querySelector(".main-container");
-  const weatherContainer = document.createElement("div");
-  weatherContainer.className = "weather-container";
-  const forecastHeading = `<div class="heading-container"><h2 class="heading-container__heading">Wetter</h2><button class="heading-container__button">Bearbeiten</button></div>`;
-  const forecastInput = `<input type="text" id="main-menu-input" placeholder="Nach Stadt suchen..."></input>`;
-  //Bei dynamischen Werten Schleife nicht vergessen
-  const weatherCard = `<div class="weather-container__wrapper">
-<div class="weather-container__card">
-  <div class="left-column">
-    <h3 class="left-column__heading">${currentAttributes.name}</h3>
-    <p class="left-column__text">${currentAttributes.currentCountry}</p>
-    <p class="left-column__text lower-text">${currentAttributes.condition}</p>
-  </div>
-  <div class="right-column">
-     <h3 class="right-column__temperature">${currentAttributes.currentTeperature}</h3>
-     <p class="right-column__text"><span>${"H:" + maxMinAttributes.currentDayMaxTemp + "° "}</span><span>${"T:" + maxMinAttributes.currentDayMinTemp + "°"}</span></p>
-  </div>
-    </div>
-  </div>`;
+export function displayCity(
+  weatherContainer,
+  currentAttributes,
+  maxMinAttributes,
+) {
+  const cardWrapper = document.createElement("div");
+  cardWrapper.className = "weather-container__wrapper";
 
-  weatherContainer.innerHTML += forecastHeading + forecastInput + weatherCard;
-  mainContainer.appendChild(weatherContainer);
-}
+  cardWrapper.innerHTML = `
+    <div class="weather-container__card" data-city="${currentAttributes.name}">
+      <div class="left-column">
+        <h3 class="left-column__heading">${currentAttributes.name}</h3>
+        <p class="left-column__text">${currentAttributes.currentCountry}</p>
+        <p class="left-column__text lower-text">${currentAttributes.condition}</p>
+      </div>
+      <div class="right-column">
+         <h3 class="right-column__temperature">${currentAttributes.currentTeperature}°</h3>
+         <p class="right-column__text">
+           <span>H:${maxMinAttributes.currentDayMaxTemp}° </span>
+           <span>T:${maxMinAttributes.currentDayMinTemp}°</span>
+         </p>
+      </div>
+    </div>`;
 
-export function cardEvents(weatherContainer, cityName, parameterForInit) {
-  if (weatherContainer) {
-    weatherContainer.addEventListener("click", (event) => {
-      const clickedCard = event.target.closest(".weather-container__card");
-
-      if (clickedCard) {
-        // Parameter für init-Funtion mit Parameter für Stadtnamen
-        parameterForInit(cityName);
-      }
-    });
-  }
+  weatherContainer.appendChild(cardWrapper);
 }

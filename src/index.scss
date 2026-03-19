@@ -22,6 +22,32 @@ body {
     color: white;
   }
 }
+//Stiling für Detailansicht
+.button-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+
+  &__back-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 4rem;
+    width: 4rem;
+    color: white;
+    border: none;
+    background-color: transparent;
+    &:hover {
+      cursor: pointer;
+    }
+  }
+  &__svg {
+    height: 2rem;
+    width: 2rem;
+    color: white;
+  }
+}
+
 .main-container {
   //bei kleinen Bildschirmen keine feste Höhe gesetzt, damit sich die Höhe dem Inhalt anpasst
   display: flex;
@@ -196,25 +222,51 @@ body {
     color: white;
   }
 }
-#main-menu-input {
-  font-size: 1rem;
-  border: none;
-  border-radius: $border-radius;
-  height: 3rem;
-  width: 100%;
-  box-sizing: border-box;
-  padding: 0.5rem;
-  cursor: pointer;
-  &::placeholder {
-    color: gray;
+
+.search-container {
+  display: flex;
+  justify-content: space-between;
+
+  &__input {
+    font-size: 1rem;
+    border: none;
+    border-radius: $border-radius;
+    height: 3rem;
+    width: 70%;
+    box-sizing: border-box;
+    padding: 0.5rem;
+    cursor: pointer;
+
+    &::placeholder {
+      color: gray;
+    }
+  }
+
+  &__save-button {
+    height: 3rem;
+    width: 20%;
+    background-color: white;
+    color: black;
+    font-size: 1rem;
+    font-weight: 500;
+    border: none;
+    border-radius: $border-radius;
+
+    &:hover {
+      cursor: pointer;
+      transition: transform 0.1s ease;
+      transform: scale(1.1);
+    }
   }
 }
+
 .weather-container {
   display: grid;
   align-items: center;
-  gap: 1rem;
+  gap: 1.5rem;
   width: 100%;
   margin: 0 auto;
+
   &__card {
     display: flex;
     align-items: center;

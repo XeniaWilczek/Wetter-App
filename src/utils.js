@@ -26,3 +26,15 @@ export function chooseImagePath(conditionCode, isNight = false) {
     mainContainer.style.backgroundImage = `url(${imagePath})`;
   }
 }
+
+export function choseMainMenuImage(
+  cardElement,
+  conditionCode,
+  isNight = false,
+) {
+  const imagePath = getConditionImagePath(conditionCode, isNight);
+
+  if (imagePath && cardElement) {
+    cardElement.style.backgroundImage = `url(${imagePath})`;
+  }
+}
