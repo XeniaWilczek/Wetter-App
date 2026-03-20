@@ -1,5 +1,27 @@
 import { getConditionImagePath } from "./conditions.js";
 
+export async function addLoadingStatus(cityName) {
+  const parentContainer = document.querySelector(".main-container");
+
+  let loadingMessage;
+  if (cityName) {
+    loadingMessage = `Wetterdaten für ${cityName} werden geladen...`;
+  } else {
+    loadingMessage = "Laden...";
+  }
+
+  parentContainer.innerHTML = `
+    <div class="loading-status">
+      <div class="loading-status__loading-message">${loadingMessage}</div>
+      <div class="loading-status__lds-ring">
+        <div></div><div></div><div></div><div></div>
+        <div></div><div></div><div></div><div></div>
+        <div></div><div></div><div></div><div></div>
+      </div>
+    </div>
+  `;
+}
+
 export function formatTemperature(temperature) {
   return Math.round(temperature);
 }

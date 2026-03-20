@@ -3,20 +3,23 @@ import {
   fetchCurrentWeahterData,
   fetchMaxMinWeatherData,
   fetchHourlyWeatherData,
-  addLoadingStatus,
+  fetchThreeDaysWeatherData,
+  fetchSpecificInformation,
+} from "./fetch.js";
+
+import {
   displayCurrentWeahterData,
   displayHourlyWeatherData,
-  fetchThreeDaysWeatherData,
   displayThreeDaysWeatherData,
-  fetchSpecificInformation,
   displaySpecificInformation,
   displayCity,
-  deleteCity,
-} from "./fetch.js";
+} from "./display.js";
+
 import {
   formatToMilitaryTime,
   chooseImagePath,
   choseMainMenuImage,
+  addLoadingStatus,
 } from "./utils.js";
 
 let cityNames = [];
