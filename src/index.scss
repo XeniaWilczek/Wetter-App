@@ -25,7 +25,7 @@ body {
 //Stiling für Detailansicht
 .button-container {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   width: 100%;
 
   &__back-button {
@@ -41,7 +41,25 @@ body {
       cursor: pointer;
     }
   }
-  &__svg {
+  &__back-svg {
+    height: 2rem;
+    width: 2rem;
+    color: white;
+  }
+  &__favorite-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 4rem;
+    width: 4rem;
+    color: white;
+    border: none;
+    background-color: transparent;
+    &:hover {
+      cursor: pointer;
+    }
+  }
+  &__favorite-svg {
     height: 2rem;
     width: 2rem;
     color: white;
@@ -223,40 +241,18 @@ body {
   }
 }
 
-.search-container {
-  display: flex;
-  justify-content: space-between;
+#city-input {
+  font-size: 1rem;
+  border: none;
+  border-radius: $border-radius;
+  height: 3rem;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.5rem;
+  cursor: pointer;
 
-  &__input {
-    font-size: 1rem;
-    border: none;
-    border-radius: $border-radius;
-    height: 3rem;
-    width: 70%;
-    box-sizing: border-box;
-    padding: 0.5rem;
-    cursor: pointer;
-
-    &::placeholder {
-      color: gray;
-    }
-  }
-
-  &__save-button {
-    height: 3rem;
-    width: 20%;
-    background-color: white;
-    color: black;
-    font-size: 1rem;
-    font-weight: 500;
-    border: none;
-    border-radius: $border-radius;
-
-    &:hover {
-      cursor: pointer;
-      transition: transform 0.1s ease;
-      transform: scale(1.1);
-    }
+  &::placeholder {
+    color: gray;
   }
 }
 
@@ -266,6 +262,28 @@ body {
   gap: 1.5rem;
   width: 100%;
   margin: 0 auto;
+  &__wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  &__delete-button {
+    color: red;
+    height: 2rem;
+    width: 2rem;
+    background-color: transparent;
+    border: none;
+    margin-bottom: 0.5rem;
+  }
+  &__delete-button:hover {
+    cursor: pointer;
+  }
+  &__svg {
+    height: 1.5rem;
+    width: 1.5rem;
+  }
 
   &__card {
     display: flex;

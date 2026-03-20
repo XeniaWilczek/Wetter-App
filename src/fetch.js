@@ -260,8 +260,31 @@ export function displayCity(
 ) {
   const cardWrapper = document.createElement("div");
   cardWrapper.className = "weather-container__wrapper";
+  const deleteButton = document.createElement("button");
+  deleteButton.className = "weather-container__delete-button";
+  deleteButton.innerHTML = `<svg
+      class="weather-container__svg"
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke-width="1.5"
+      stroke="currentColor"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+      />
+    </svg>`;
+
+  deleteButton.addEventListener("click", (event) => {
+    event.stopPropagation();
+    deleteCity(currentAttributes.name);
+    cardWrapper.remove();
+  });
 
   cardWrapper.innerHTML = `
+
     <div class="weather-container__card" data-city="${currentAttributes.name}">
       <div class="left-column">
         <h3 class="left-column__heading">${currentAttributes.name}</h3>
@@ -276,6 +299,12 @@ export function displayCity(
          </p>
       </div>
     </div>`;
-
+  cardWrapper.prepend(deleteButton);
   weatherContainer.appendChild(cardWrapper);
+}
+
+export function deleteCity(cityName) {
+  const cityNames = JSON.parse(localStorage.getItem("weatherFavorites")) || [];
+  const filteredCityNames = cityNames.filter((city) => city !== cityName);
+  localStorage.setItem("weatherFavorites", JSON.stringify(filteredCityNames));
 }
