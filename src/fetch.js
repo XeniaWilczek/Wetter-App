@@ -5,7 +5,7 @@ const apiKey = "90830fb3c1a343c28d9123005261003";
 const apiLanguage = "de";
 
 export async function fetchCurrentWeahterData(cityName) {
-  //cityName ist der einzige variable Punkt in der FUnktion; fixert Wert "Baden-Baden wird beim Aufruf gesetzt"
+  //cityName ist der einzige variable Punkt in der FUnktion; Wert für Stadt wird beim Aufruf gesetzt
   const currentAPI = `${apiURL}/current.json?key=${apiKey}&lang=${apiLanguage}&q=${cityName}`;
   const response = await fetch(currentAPI);
   const currentCity = await response.json();
@@ -56,7 +56,13 @@ export async function fetchHourlyWeatherData(cityName) {
   });
 
   // Falls der Index nicht gefunden wird, die aktuelle Stunde wählen
-  const finalStartIndex = startIndex !== -1 ? startIndex : currentHour;
+  let finalStartIndex;
+
+  if (startIndex !== -1) {
+    finalStartIndex = startIndex;
+  } else {
+    finalStartIndex = currentHour;
+  }
 
   // Ausschnitt immer ab der aktuellen Stunde für die nächsten 24 Stunden
   const nextTwentyFourHours = allHoursData.slice(
