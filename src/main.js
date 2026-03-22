@@ -132,7 +132,7 @@ async function init(cityName) {
         "weatherFavorites",
         JSON.stringify(currentFavorites),
       );
-      // Button nach erneutem Anklicken nicht mehr anzeigen
+      // Button nach erneutem Anklicken der Stadt-Card nicht mehr anzeigen
       favoriteButton.style.display = "none";
     }
   });
