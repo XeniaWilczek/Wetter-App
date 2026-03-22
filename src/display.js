@@ -19,8 +19,7 @@ export function displayHourlyWeatherData(
 ) {
   const hoursContainer = document.createElement("div");
   hoursContainer.className = "hourly-weather";
-
-  // html-String für currentWeatherDetails
+  //Wetter der aktuellen Uhrzeit anzeigen
   const currentWeatherDetails = `<div class="hourly-weather__text"><span>${"Heute " + currentAttributes.condition + ". "}</span><span>${"Wind bis zu " + currentAttributes.maxWindSpeed + " km/h"}</span></div>
         <div class="hourly-weather__hours">
           <div class="hourly-weather__hour">
@@ -32,7 +31,7 @@ export function displayHourlyWeatherData(
   //Variable zur Anzeige der Wetterdaten der weiteren Stunden
   let hourlyWeatherDetails = "";
 
-  // forEach-Schleife ab Index 1 (aktuellen Wert auslassen)
+  // forEach-Schleife ab Index 1 (aktuellen Wert auslassen,da bereits vorhanden)
   nextTwentyFourHours.slice(1).forEach((element) => {
     const hourlyDate = new Date(element.time);
     const hourlyTime = hourlyDate.getHours();
@@ -48,7 +47,7 @@ export function displayHourlyWeatherData(
       </div>`;
   });
 
-  // beide html-String zusammenfügen und divs erst dann schließen (hourly.weather__hours und hourly-weather)
+  // beide html-String zusammenfügen und divs erst danach schließen (hourly.weather__hours und hourly-weather)
   hoursContainer.innerHTML =
     currentWeatherDetails + hourlyWeatherDetails + `</div></div>`;
 
