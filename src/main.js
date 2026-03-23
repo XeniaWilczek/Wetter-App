@@ -36,7 +36,7 @@ async function initMainMenu() {
       <h2 class="heading-container__heading">Wetter</h2>
       <button class="heading-container__button">Bearbeiten</button>
     </div>
-    <input type="text" id="city-input" placeholder="Nach Stadt suchen...">
+    <input type="search" id="city-input" placeholder="Nach Stadt suchen...">
     <div class="weather-container"></div>
   `;
 
