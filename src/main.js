@@ -74,6 +74,21 @@ async function initMainMenu() {
       !currentAttributes.isDay,
     );
   }
+  //Funktionalität für Bearbeiten-Button festlegen, nachdem delete-button gebaut wurde
+  const editButton = document.querySelector(".heading-container__button");
+  const deleteButtons = document.querySelectorAll(
+    ".weather-container__delete-button",
+  );
+
+  editButton.addEventListener("click", () => {
+    if (editButton.textContent === "Bearbeiten") {
+      deleteButtons.forEach((button) => (button.style.display = "block"));
+      editButton.textContent = "Fertig";
+    } else {
+      deleteButtons.forEach((button) => (button.style.display = "none"));
+      editButton.textContent = "Bearbeiten";
+    }
+  });
 }
 
 // Funktionen für die Detailansicht einer Stadt

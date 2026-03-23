@@ -260,6 +260,7 @@ body {
     background-color: $transparent-background;
     border: none;
     margin-bottom: 0.5rem;
+    display: none;
   }
   &__delete-button:hover {
     cursor: pointer;
