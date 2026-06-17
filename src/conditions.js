@@ -12,7 +12,7 @@ export function getConditionImagePath(code, isNight = false) {
 const CONDITION_IMAGES = [
   {
     code: 1000,
-    day: "day/sunny.jpg",
+    day: "/day/sunny.jpg",
     night: "night/clear.jpg",
   },
   {
