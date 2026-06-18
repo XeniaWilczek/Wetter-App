@@ -9,7 +9,9 @@ export function getConditionImagePath(code, isNight = false) {
     subPath = subPath.substring(1);
   }
 
-  return "/wetter-app/conditionImages/" + subPath;
+  // Holt dynamisch die Basis-URL ("/" lokal oder "/Wetter-App/" auf GitHub)
+  const baseUrl = import.meta.env.BASE_URL;
+  return `${baseUrl}conditionImages/${subPath}`;
 }
 
 const CONDITION_IMAGES = [

@@ -1,5 +1,5 @@
 import "./index.scss";
-import { fetchAllWeatherData } from "./fetch.js"; // Nutzt die optimierte Funktion
+import { fetchAllWeatherData } from "./fetch.js";
 
 import {
   displayCurrentWeahterData,
@@ -52,7 +52,7 @@ async function initMainMenu() {
   });
 
   for (const city of cityNames) {
-    // Lädt alle Daten für die Menükarte mit nur einem Aufruf
+    // Lädt alle Daten für die Menü-Ansicht mit nur einem Aufruf
     const weather = await fetchAllWeatherData(city);
 
     displayCity(
@@ -110,7 +110,6 @@ async function init(cityName) {
 
   const buttonContainer = document.createElement("div");
   buttonContainer.className = "button-container";
-  // SVG-Namensräume repariert, damit Icons auf GitHub Pages sichtbar sind
   buttonContainer.innerHTML = `
     <button class="button-container__back-button">
       <svg class="button-container__back-svg" xmlns="http://w3.org" fill="none" viewBox="0 0 24 24" stroke-width="2.0" stroke="currentColor">

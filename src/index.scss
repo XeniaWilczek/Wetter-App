@@ -59,14 +59,17 @@ body {
   color: $text-color;
   padding: 1rem;
   min-height: 100vh;
-
-  // Wichtig für Smartphones: Das Bild muss den gesamten Bildschirm füllen und zentriert sein
-  background-position: center;
-  background-size: cover;
-  background-repeat: no-repeat;
-
-  // Ein dunkler Fallback-Hintergrund, falls das API-Bild kurz lädt
-  background-color: #252e3a;
+  @include largeScreens {
+    width: 400px;
+    height: $max-height-desktop;
+    min-height: unset;
+    overflow: auto;
+    border-radius: $border-radius;
+    background-position: bottom;
+    background-size: cover;
+    @include blurEffect;
+    background: linear-gradient(0deg, #404547, #252e3a 51%);
+  }
 }
 
 .main-data {

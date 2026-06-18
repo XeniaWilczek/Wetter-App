@@ -1,19 +1,19 @@
 import { formatTemperature } from "./utils.js";
 
-const apiURL = "https://weatherapi.com";
+const apiURL = "https://api.weatherapi.com/v1";
 const apiKey = "90830fb3c1a343c28d9123005261003";
 const apiLanguage = "de";
 
-// Holt alle benötigten Wetterdaten mit einem einzigen API-Aufruf
+// Holt alle benötigten Wetterdaten mit nur einer API-Anfrage
 export async function fetchAllWeatherData(cityName) {
   // cityName ist der einzige variable Punkt; Wert für Stadt wird beim Aufruf gesetzt
-  // Wir fordern direkt 3 Tage an, um stündliche Daten, Max/Min und die 3-Tage-Vorhersage abzubauen
+  // direkt 3 Tage anfragen für stündliche Daten des aktauellen Tages, für Max-/Min-Werte und für 3-Tage-Vorhersage
   const forecastAPI = `${apiURL}/forecast.json?key=${apiKey}&lang=${apiLanguage}&q=${cityName}&days=3`;
 
   const response = await fetch(forecastAPI);
   const data = await response.json();
 
-  // 1. Aktuelle Wetterdaten aufbauen
+  // 1. Aktuelle Wetterdaten
   const currentAttributes = {
     name: data.location.name,
     currentCountry: data.location.country,
@@ -25,7 +25,7 @@ export async function fetchAllWeatherData(cityName) {
     isDay: data.current.is_day === 1,
   };
 
-  // 2. Max/Min Attribute extrahieren
+  // 2. Max/Min-Attribute
   const maxMinAttributes = {
     currentDayMaxTemp: formatTemperature(
       data.forecast.forecastday[0].day.maxtemp_c,
@@ -35,7 +35,7 @@ export async function fetchAllWeatherData(cityName) {
     ),
   };
 
-  // 3. Stündliche Wetterdaten aufbauen (Ausschnitt der nächsten 24 Stunden)
+  // 3. Stündliche Wetterdaten (Ausschnitt der nächsten 24 Stunden)
   const currentDayData = data.forecast.forecastday[0].hour;
   const nextDayData = data.forecast.forecastday[1].hour;
   const allHoursData = currentDayData.concat(nextDayData); // beide Listen zusammenfügen
@@ -56,7 +56,7 @@ export async function fetchAllWeatherData(cityName) {
     finalStartIndex + 24,
   );
 
-  // 4. Drei-Tage-Vorhersage aufbauen
+  // 4. Drei-Tage-Vorhersage
   let forecastElements = []; // leeres Array für drei Tag-Objekte
   const threeDaysData = data.forecast.forecastday;
 
@@ -90,7 +90,7 @@ export async function fetchAllWeatherData(cityName) {
     sunset: data.forecast.forecastday[0].astro.sunset,
   };
 
-  // Gibt alle getrennten Datenstrukturen gesammelt zurück
+  // alle Datenstrukturen zurückgeben
   return {
     currentAttributes,
     maxMinAttributes,
