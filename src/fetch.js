@@ -1,68 +1,54 @@
 import { formatTemperature } from "./utils.js";
 
-const apiURL = "https://api.weatherapi.com/v1/";
+const apiURL = "https://weatherapi.com";
 const apiKey = "90830fb3c1a343c28d9123005261003";
 const apiLanguage = "de";
 
-export async function fetchCurrentWeahterData(cityName) {
-  //cityName ist der einzige variable Punkt in der FUnktion; Wert für Stadt wird beim Aufruf gesetzt
-  const currentAPI = `${apiURL}/current.json?key=${apiKey}&lang=${apiLanguage}&q=${cityName}`;
-  const response = await fetch(currentAPI);
-  const currentCity = await response.json();
-  let currentAttributes = {
-    name: currentCity.location.name,
-    currentCountry: currentCity.location.country,
-    currentTeperature: formatTemperature(currentCity.current.temp_c),
-    condition: currentCity.current.condition.text,
-    maxWindSpeed: currentCity.current.wind_kph,
-    icon: currentCity.current.condition.icon,
-    conditionCode: currentCity.current.condition.code,
-    isDay: currentCity.current.is_day === 1,
-  };
-  return currentAttributes;
-}
-
-export async function fetchMaxMinWeatherData(cityName) {
+// Holt alle benötigten Wetterdaten mit einem einzigen API-Aufruf
+export async function fetchAllWeatherData(cityName) {
+  // cityName ist der einzige variable Punkt; Wert für Stadt wird beim Aufruf gesetzt
+  // Wir fordern direkt 3 Tage an, um stündliche Daten, Max/Min und die 3-Tage-Vorhersage abzubauen
   const forecastAPI = `${apiURL}/forecast.json?key=${apiKey}&lang=${apiLanguage}&q=${cityName}&days=3`;
-  const response = await fetch(forecastAPI);
-  const maxMinForecast = await response.json();
-  let maxMinAttributes = {
-    currentDayMaxTemp: formatTemperature(
-      maxMinForecast.forecast.forecastday[0].day.maxtemp_c,
-    ),
-    currentDayMinTemp: formatTemperature(
-      maxMinForecast.forecast.forecastday[0].day.mintemp_c,
-    ),
-  };
-  return maxMinAttributes;
-}
 
-export async function fetchHourlyWeatherData(cityName) {
-  const forecastAPI = `${apiURL}/forecast.json?key=${apiKey}&lang=${apiLanguage}&q=${cityName}&days=2`;
   const response = await fetch(forecastAPI);
   const data = await response.json();
-  //beide Listen zusammenfügen
+
+  // 1. Aktuelle Wetterdaten aufbauen
+  const currentAttributes = {
+    name: data.location.name,
+    currentCountry: data.location.country,
+    currentTeperature: formatTemperature(data.current.temp_c),
+    condition: data.current.condition.text,
+    maxWindSpeed: data.current.wind_kph,
+    icon: data.current.condition.icon,
+    conditionCode: data.current.condition.code,
+    isDay: data.current.is_day === 1,
+  };
+
+  // 2. Max/Min Attribute extrahieren
+  const maxMinAttributes = {
+    currentDayMaxTemp: formatTemperature(
+      data.forecast.forecastday[0].day.maxtemp_c,
+    ),
+    currentDayMinTemp: formatTemperature(
+      data.forecast.forecastday[0].day.mintemp_c,
+    ),
+  };
+
+  // 3. Stündliche Wetterdaten aufbauen (Ausschnitt der nächsten 24 Stunden)
   const currentDayData = data.forecast.forecastday[0].hour;
   const nextDayData = data.forecast.forecastday[1].hour;
-  const allHoursData = currentDayData.concat(nextDayData);
+  const allHoursData = currentDayData.concat(nextDayData); // beide Listen zusammenfügen
 
-  // Aktuelle Stunde ermitteln
-  const currentHour = new Date().getHours();
+  const currentHour = new Date().getHours(); // Aktuelle Stunde ermitteln
 
-  //Index des Elements finden, das der aktuellen Stunde entspricht
+  // Index des Elements finden, das der aktuellen Stunde entspricht
   const startIndex = allHoursData.findIndex((hour) => {
     const hourDate = new Date(hour.time);
     return hourDate.getHours() === currentHour;
   });
 
-  // Falls der Index nicht gefunden wird, die aktuelle Stunde wählen
-  let finalStartIndex;
-
-  if (startIndex !== -1) {
-    finalStartIndex = startIndex;
-  } else {
-    finalStartIndex = currentHour;
-  }
+  let finalStartIndex = startIndex !== -1 ? startIndex : currentHour;
 
   // Ausschnitt immer ab der aktuellen Stunde für die nächsten 24 Stunden
   const nextTwentyFourHours = allHoursData.slice(
@@ -70,17 +56,9 @@ export async function fetchHourlyWeatherData(cityName) {
     finalStartIndex + 24,
   );
 
-  return nextTwentyFourHours;
-}
-
-export async function fetchThreeDaysWeatherData(cityName) {
-  const forecastAPI = `${apiURL}/forecast.json?key=${apiKey}&lang=${apiLanguage}&q=${cityName}&days=3`;
-  const response = await fetch(forecastAPI);
-  const weatherData = await response.json();
-
-  // leeres Array für drei Tag-Objekte
-  let forecastElements = [];
-  const threeDaysData = weatherData.forecast.forecastday;
+  // 4. Drei-Tage-Vorhersage aufbauen
+  let forecastElements = []; // leeres Array für drei Tag-Objekte
+  const threeDaysData = data.forecast.forecastday;
 
   threeDaysData.forEach((object, i) => {
     const dateObject = new Date(object.date);
@@ -99,24 +77,25 @@ export async function fetchThreeDaysWeatherData(cityName) {
       icon: object.day.condition.icon,
     };
 
-    // Tag-Objekte zum Array hinzufügen
-    forecastElements.push(dayData);
+    forecastElements.push(dayData); // Tag-Objekte zum Array hinzufügen
   });
 
-  return forecastElements;
-}
+  // 5. Spezifische Zusatzinformationen extrahieren
+  const specificInformation = {
+    humidity: data.current.humidity,
+    feelslike: data.current.feelslike_c,
+    uvIndex: data.current.uv,
+    precipitation: data.current.precip_mm,
+    sunrise: data.forecast.forecastday[0].astro.sunrise,
+    sunset: data.forecast.forecastday[0].astro.sunset,
+  };
 
-export async function fetchSpecificInformation(cityName) {
-  const forecastAPI = `${apiURL}/forecast.json?key=${apiKey}&lang=${apiLanguage}&q=${cityName}&days=1`;
-  const response = await fetch(forecastAPI);
-  const specificInformation = await response.json();
-
+  // Gibt alle getrennten Datenstrukturen gesammelt zurück
   return {
-    humidity: specificInformation.current.humidity,
-    feelslike: specificInformation.current.feelslike_c,
-    uvIndex: specificInformation.current.uv,
-    precipitation: specificInformation.current.precip_mm,
-    sunrise: specificInformation.forecast.forecastday[0].astro.sunrise,
-    sunset: specificInformation.forecast.forecastday[0].astro.sunset,
+    currentAttributes,
+    maxMinAttributes,
+    nextTwentyFourHours,
+    forecastElements,
+    specificInformation,
   };
 }

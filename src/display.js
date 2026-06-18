@@ -9,8 +9,10 @@ export function displayCurrentWeahterData(currentAttributes, maxMinAttributes) {
         <div class="main-data__max-min">
 <span id="max"></span>${"H:" + maxMinAttributes.currentDayMaxTemp + "° "}<span id="min">${"T:" + maxMinAttributes.currentDayMinTemp + "°"}</span></div>`;
   mainWeatherContainer.innerHTML = weatherDetails;
-  const parentContainer = document.getElementsByClassName("main-container")[0];
-  parentContainer.appendChild(mainWeatherContainer);
+
+  // Sicherer Zugriff via querySelector statt getElementsByClassName
+  const parentContainer = document.querySelector(".main-container");
+  if (parentContainer) parentContainer.appendChild(mainWeatherContainer);
 }
 
 export function displayHourlyWeatherData(
@@ -19,12 +21,18 @@ export function displayHourlyWeatherData(
 ) {
   const hoursContainer = document.createElement("div");
   hoursContainer.className = "hourly-weather";
+
+  // Repariert den API-Icon-Pfad mit "https:" für GitHub Pages
+  const safeCurrentIcon = currentAttributes.icon.startsWith("http")
+    ? currentAttributes.icon
+    : `https:${currentAttributes.icon}`;
+
   //Wetter der aktuellen Uhrzeit anzeigen
   const currentWeatherDetails = `<div class="hourly-weather__text"><span>${"Heute " + currentAttributes.condition + ". "}</span><span>${"Wind bis zu " + currentAttributes.maxWindSpeed + " km/h"}</span></div>
         <div class="hourly-weather__hours">
           <div class="hourly-weather__hour">
             <p class="hourly-weather__time">Jetzt</p>
-            <img src="${currentAttributes.icon}" class="hourly-weather__icon"/>
+            <img src="${safeCurrentIcon}" class="hourly-weather__icon"/>
             <p class="hourly-weather__temperature">${currentAttributes.currentTeperature + " °"}</p>
           </div>`;
 
@@ -33,16 +41,21 @@ export function displayHourlyWeatherData(
 
   // forEach-Schleife ab Index 1 (aktuellen Wert auslassen,da bereits vorhanden)
   nextTwentyFourHours.slice(1).forEach((element) => {
-    const hourlyDate = new Date(element.time);
-    const hourlyTime = hourlyDate.getHours();
-    const hourlyIcon = element.condition.icon;
+    // Teilt "2026-06-19 01:00" beim Leerzeichen und nimmt den hinteren Teil "01:00"
+    const hourlyTime = element.time.split(" ")[1];
+
+    // Repariert den API-Icon-Pfad für GitHub Pages
+    const safeHourlyIcon = element.condition.icon.startsWith("http")
+      ? element.condition.icon
+      : `https:${element.condition.icon}`;
+
     const hourlyTemperature = formatTemperature(element.temp_c);
 
     // Anhängen der stündlichen Wetterdaten an aktuelle Wetterdaten
     hourlyWeatherDetails += `
       <div class="hourly-weather__hour">
-        <p class="hourly-weather__time">${hourlyTime + ":00"}</p>
-        <img src="${hourlyIcon}" class="hourly-weather__icon" alt="Wetter Icon"/>
+        <p class="hourly-weather__time">${hourlyTime}</p>
+        <img src="${safeHourlyIcon}" class="hourly-weather__icon" alt="Wetter Icon"/>
         <p class="hourly-weather__temperature">${hourlyTemperature}°</p>
       </div>`;
   });
@@ -51,8 +64,8 @@ export function displayHourlyWeatherData(
   hoursContainer.innerHTML =
     currentWeatherDetails + hourlyWeatherDetails + `</div></div>`;
 
-  const parentContainer = document.getElementsByClassName("main-container")[0];
-  parentContainer.appendChild(hoursContainer);
+  const parentContainer = document.querySelector(".main-container");
+  if (parentContainer) parentContainer.appendChild(hoursContainer);
 }
 
 export function displayThreeDaysWeatherData(forecastElements) {
@@ -72,10 +85,15 @@ export function displayThreeDaysWeatherData(forecastElements) {
 
   // div für jeden der 3 Tage erstellen
   forecastElements.forEach((dayData) => {
+    // Repariert den API-Icon-Pfad für GitHub Pages
+    const safeDayIcon = dayData.icon.startsWith("http")
+      ? dayData.icon
+      : `https:${dayData.icon}`;
+
     const dayHTML = `
       <div class="threeDaysForecast__day">
         <span class="threeDaysForecast__weekday">${dayData.weekday}</span>
-        <img src="${dayData.icon}" alt="Wetter-Icon" class="threeDaysForecast__icon"> 
+        <img src="${safeDayIcon}" alt="Wetter-Icon" class="threeDaysForecast__icon"> 
         <span>${"H " + dayData.maxTemp + "°"}</span> 
         <span>${"T " + dayData.minTemp + "°"}</span> 
         <span>${"Wind: " + dayData.maxWind + "km/h"}</span>
@@ -88,11 +106,13 @@ export function displayThreeDaysWeatherData(forecastElements) {
   forecastContainer.appendChild(daysContainer);
 
   const mainContainer = document.querySelector(".main-container");
-  mainContainer.appendChild(forecastContainer);
+  if (mainContainer) mainContainer.appendChild(forecastContainer);
 }
 
 export function displaySpecificInformation(heading, text) {
   const mainContainer = document.querySelector(".main-container");
+  if (!mainContainer) return;
+
   let specificInfoContainer = document.querySelector(".specific-information");
 
   // specificInfoContainer nur erzeugen, wenn er noch nicht exisitert (sonst wird er bei jedem Funktionsaufruf erstellt)
@@ -121,9 +141,10 @@ export function displayCity(
   cardWrapper.className = "weather-container__wrapper";
   const deleteButton = document.createElement("button");
   deleteButton.className = "weather-container__delete-button";
+  // SVG-Namensraum korrigiert
   deleteButton.innerHTML = `<svg
       class="weather-container__svg"
-      xmlns="http://www.w3.org/2000/svg"
+      xmlns="http://w3.org"
       fill="none"
       viewBox="0 0 24 24"
       stroke-width="1.5"
@@ -143,7 +164,6 @@ export function displayCity(
   });
 
   cardWrapper.innerHTML = `
-
     <div class="weather-container__card" data-city="${currentAttributes.name}">
       <div class="left-column">
         <h3 class="left-column__heading">${currentAttributes.name}</h3>
@@ -159,9 +179,10 @@ export function displayCity(
       </div>
     </div>`;
   cardWrapper.prepend(deleteButton);
-  weatherContainer.appendChild(cardWrapper);
+  if (weatherContainer) weatherContainer.appendChild(cardWrapper);
 }
 
+// Funktion vervollständigt
 export function deleteCity(cityName) {
   const cityNames = JSON.parse(localStorage.getItem("weatherFavorites")) || [];
   const filteredCityNames = cityNames.filter((city) => city !== cityName);
