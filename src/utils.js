@@ -48,10 +48,20 @@ export function formatToMilitaryTime(time) {
 
 export function chooseImagePath(conditionCode, isNight = false) {
   const imagePath = getConditionImagePath(conditionCode, isNight);
+  const mainContainer = document.querySelector(".main-container");
+
+  if (!mainContainer) return;
 
   if (imagePath) {
-    const mainContainer = document.querySelector(".main-container");
-    mainContainer.style.backgroundImage = `url(${imagePath})`;
+    mainContainer.style.backgroundImage = `url('${imagePath}')`;
+
+    // Liste der hellen Bilder
+    const lightImages = ["ice_pellets", "lighting_day", "rain_day", "snow_day"];
+    // Prüft, ob der Pfad eines der Bilder enthält
+    const isLight = lightImages.some((img) => imagePath.includes(img));
+
+    // Aktiviert oder deaktiviert die CSS-Klasse
+    mainContainer.classList.toggle("theme--light", isLight);
   }
 }
 
