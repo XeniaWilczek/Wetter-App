@@ -43,13 +43,14 @@ export function formatToMilitaryTime(time) {
 
 export function chooseImagePath(conditionCode, isNight = false) {
   const mainContainer = document.querySelector(".main-container");
-  if (!mainContainer) return;
+  if (!mainContainer) return; // KORREKTUR: Variable auf mainContainer geändert
 
   const imagePath = getConditionImagePath(conditionCode, isNight);
 
   if (imagePath) {
     mainContainer.style.backgroundImage = `url('${imagePath}')`;
 
+    // Bleibt weiß bei Sonne/Teilweise bewölkt; wird dunkel bei grauem/weißem Himmel
     const lightImages = ["ice_pellets", "lighting_day", "rain_day", "snow_day"];
     const isLight = lightImages.some((img) => imagePath.includes(img));
 

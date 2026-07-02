@@ -24,6 +24,7 @@ async function initMainMenu() {
 
   const mainContainer = document.querySelector(".main-container");
   mainContainer.style.backgroundImage = "";
+  mainContainer.classList.remove("theme--light");
 
   mainContainer.innerHTML = `
     <div class="heading-container">

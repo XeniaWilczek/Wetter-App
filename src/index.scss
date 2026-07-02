@@ -1,7 +1,7 @@
 @use "variables" as *;
 @use "mixins" as *;
 @use "loading" as *;
-@import url("https://googleapis.com");
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Lobster&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Rubik+Scribble&family=Style+Script&display=swap");
 
 * {
   padding: 0;
@@ -49,7 +49,7 @@ body {
     height: 2rem;
     width: 2rem;
     color: $text-color;
-    fill: currentColor; // Koppelt die SVG-Farbe an das Elternelement
+    fill: currentColor;
   }
 }
 
@@ -62,7 +62,6 @@ body {
   padding: 1rem;
   min-height: 100vh;
 
-  // Große Bildschirme für den Hauptcontainer
   @include largeScreens {
     width: 400px;
     height: $max-height-desktop;
@@ -75,35 +74,54 @@ body {
     background: linear-gradient(0deg, #404547, #252e3a 51%);
   }
 
-  // Einziger, vollständiger Theme-Block für helle Hintergründe
+  // KORREKTUR: Text bleibt weiß, wird aber durch einen optimierten Schatten geschützt
   &.theme--light {
-    color: #000000;
+    color: #ffffff;
 
-    // Entfernt den Textschatten auf allen relevanten Elementen
+    // Gibt allen Texten auf hellen Hintergründen den schützenden Schatten
     &,
     .main-data,
     .heading-container,
-    .weather-container__card {
-      text-shadow: none;
+    .weather-container__card,
+    .hourly-weather,
+    .threeDaysForecast,
+    .specific-information__card {
+      text-shadow:
+        1px 1px 4px rgba(0, 0, 0, 0.95),
+        /* 1. Scharfe, tiefschwarze Kontur direkt am Buchstaben */ 0px 0px 8px
+          rgba(0, 0, 0, 0.75),
+        /* 2. Mittlerer, satter Schatten für Volumen */ 0px 0px 14px
+          rgba(0, 0, 0, 0.5); /* 3. Weitläufige, dunkle Aura für den Kontrast zum Bild */
     }
 
-    // Färbt alle Buttons, Menü-Karten und Navigations-Icons schwarz
+    // Sorgt dafür, dass die Navigations-Buttons und Icons ebenfalls weiß bleiben
     .button-container__back-button,
     .button-container__favorite-button,
     .button-container__back-svg,
     .button-container__favorite-svg,
     .heading-container__button,
     .weather-container__card {
-      color: #000000;
+      color: #ffffff;
+      filter: drop-shadow(1px 1px 3px rgba(0, 0, 0, 0.8));
     }
 
-    // Invertiert die hellen API-Wetter-Icons zu dunklen Grafiken
+    // Die Wetter-Icons bleiben farbig und heben sich durch Schatten vom hellen Bild ab
     .hourly-weather__icon,
     .threeDaysForecast__icon {
-      filter: invert(1) brightness(0.2);
+      filter: drop-shadow(0px 2px 5px rgba(0, 0, 0, 0.4));
+    }
+
+    // Die Glas-Boxen behalten ihren dunklen Look, damit die weiße Schrift maximalen Kontrast hat
+    .hourly-weather,
+    .threeDaysForecast,
+    .specific-information__card,
+    .weather-container__card {
+      background: rgba(30, 41, 59, 0.55);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
     }
   }
-}
+} // KORREKTUR: Hier schließt der .main-container nun wieder sauber!
 
 .main-data {
   display: flex;
@@ -188,7 +206,7 @@ body {
   }
   &__day {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    grid-template-columns: repeat(5, 1fr);
     align-items: center;
     width: 100%;
     padding: 0.5rem 0;
@@ -238,7 +256,6 @@ body {
   }
 }
 
-// Styling für das Haupt-Menü
 .heading-container {
   display: flex;
   justify-content: space-between;
@@ -280,6 +297,7 @@ body {
   gap: 1.5rem;
   width: 100%;
   margin: 0 auto;
+
   &__wrapper {
     display: flex;
     justify-content: center;
@@ -287,22 +305,24 @@ body {
     gap: 0.5rem;
   }
 
+  // KORREKTUR: Mit "&" geschrieben, damit es zur Struktur passt
   &__delete-button {
-    color: red;
-    height: 2rem;
-    width: 2rem;
-    background-color: $transparent-background;
+    background: transparent;
     border: none;
-    margin-bottom: 0.5rem;
-    display: none;
+    color: #ef4444; /* Ein modernes, klares Rot für das Minus-Icon */
+    display: none; /* Wird weiterhin dynamisch über JS per Klick eingeblendet */
+    transition: transform 0.2s ease;
+
+    &:hover {
+      transform: scale(1.1); /* Wird beim Drüberfahren minimal größer */
+      cursor: pointer;
+    }
   }
-  &__delete-button:hover {
-    cursor: pointer;
-  }
+
   &__svg {
     height: 1.5rem;
     width: 1.5rem;
-    fill: currentColor;
+    fill: none;
   }
 
   &__card {
@@ -323,7 +343,6 @@ body {
     }
   }
 }
-
 .left-column {
   display: flex;
   flex-direction: column;
