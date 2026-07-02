@@ -62,23 +62,23 @@ body {
   padding: 1rem;
   min-height: 100vh;
 
+  background: linear-gradient(0deg, #404547, #252e3a 51%);
+  background-position: bottom;
+  background-size: cover;
+
   @include largeScreens {
     width: 400px;
     height: $max-height-desktop;
     min-height: unset;
     overflow: auto;
     border-radius: $border-radius;
-    background-position: bottom;
-    background-size: cover;
     @include blurEffect;
-    background: linear-gradient(0deg, #404547, #252e3a 51%);
   }
 
-  // KORREKTUR: Text bleibt weiß, wird aber durch einen optimierten Schatten geschützt
   &.theme--light {
     color: #ffffff;
 
-    // Gibt allen Texten auf hellen Hintergründen den schützenden Schatten
+    // starker Schatten für Texte auf hellen Hintergründen
     &,
     .main-data,
     .heading-container,
@@ -88,13 +88,10 @@ body {
     .specific-information__card {
       text-shadow:
         1px 1px 4px rgba(0, 0, 0, 0.95),
-        /* 1. Scharfe, tiefschwarze Kontur direkt am Buchstaben */ 0px 0px 8px
-          rgba(0, 0, 0, 0.75),
-        /* 2. Mittlerer, satter Schatten für Volumen */ 0px 0px 14px
-          rgba(0, 0, 0, 0.5); /* 3. Weitläufige, dunkle Aura für den Kontrast zum Bild */
+        0px 0px 8px rgba(0, 0, 0, 0.75),
+        0px 0px 14px rgba(0, 0, 0, 0.5);
     }
 
-    // Sorgt dafür, dass die Navigations-Buttons und Icons ebenfalls weiß bleiben
     .button-container__back-button,
     .button-container__favorite-button,
     .button-container__back-svg,
@@ -105,13 +102,12 @@ body {
       filter: drop-shadow(1px 1px 3px rgba(0, 0, 0, 0.8));
     }
 
-    // Die Wetter-Icons bleiben farbig und heben sich durch Schatten vom hellen Bild ab
     .hourly-weather__icon,
     .threeDaysForecast__icon {
       filter: drop-shadow(0px 2px 5px rgba(0, 0, 0, 0.4));
     }
 
-    // Die Glas-Boxen behalten ihren dunklen Look, damit die weiße Schrift maximalen Kontrast hat
+    // Die Glas-Boxen mit Kontrast für hellen Hintergrund behalten
     .hourly-weather,
     .threeDaysForecast,
     .specific-information__card,
@@ -121,7 +117,7 @@ body {
       box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
     }
   }
-} // KORREKTUR: Hier schließt der .main-container nun wieder sauber!
+}
 
 .main-data {
   display: flex;
@@ -305,16 +301,15 @@ body {
     gap: 0.5rem;
   }
 
-  // KORREKTUR: Mit "&" geschrieben, damit es zur Struktur passt
   &__delete-button {
     background: transparent;
     border: none;
-    color: #ef4444; /* Ein modernes, klares Rot für das Minus-Icon */
-    display: none; /* Wird weiterhin dynamisch über JS per Klick eingeblendet */
+    color: #ef4444;
+    display: none;
     transition: transform 0.2s ease;
 
     &:hover {
-      transform: scale(1.1); /* Wird beim Drüberfahren minimal größer */
+      transform: scale(1.1);
       cursor: pointer;
     }
   }
